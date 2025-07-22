@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { useEffect } from 'react';
 
 function Login({ onLogin, onToggleSignup }) {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  useEffect(()=>{
+    if(sessionStorage.getItem('profoot-token')){
+      onLogin();
+    }
+  },[])
   const handleLogin = async () => {
     setError(''); // Clear previous error
 
@@ -16,7 +22,7 @@ function Login({ onLogin, onToggleSignup }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
@@ -25,8 +31,8 @@ function Login({ onLogin, onToggleSignup }) {
         setError(data.error || 'Login failed');
         return;
       }
-
-      onLogin(username); // Pass the username to App.jsx
+      sessionStorage.setItem("profoot-token",data.data.token)
+      onLogin(email); // Pass the username to App.jsx
     } catch (err) {
       setError('Login failed. Please try again.');
     }
@@ -41,10 +47,10 @@ function Login({ onLogin, onToggleSignup }) {
             <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
             <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />

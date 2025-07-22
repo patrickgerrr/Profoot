@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faHome, faAppleAlt, faDumbbell, faHistory, faBullhorn, 
@@ -88,7 +88,10 @@ function Dashboard({ onLogout }) {
                 </button>
               ))}
               <button
-                onClick={onLogout}
+                onClick={()=>{
+                  sessionStorage.removeItem("profoot-token");
+                  onLogout();
+                }}
                 className="w-full text-left px-4 py-2 rounded hover:bg-red-600 flex items-center text-red-500"
               >
                 <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
@@ -112,7 +115,10 @@ function Dashboard({ onLogout }) {
               </button>
             ))}
             <button
-              onClick={onLogout}
+              onClick={()=>{
+                sessionStorage.removeItem("profoot-token");
+                onLogout();
+              }}
               className="w-full text-center p-2 rounded hover:bg-red-600 flex items-center justify-center"
             >
               <FontAwesomeIcon icon={faSignOutAlt} size="lg" className="text-red-500" />

@@ -4,7 +4,7 @@ import Footer from './Footer';
 
 function Signup({ onLogin, onToggleLogin }) {
   const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -28,17 +28,16 @@ function Signup({ onLogin, onToggleLogin }) {
         },
         body: JSON.stringify({
           name,
-          email: username,
+          email,
           password,
         }),
       });
-
+      const { error ,data} = await response.json();
       if (!response.ok) {
-        const { error } = await response.json();
         setError(error || "An error occurred during signup.");
         return;
       }
-
+      sessionStorage.setItem("profoot-token",data.token)
       setSuccess("Signup successful!");
       setTimeout(() => onToggleLogin(), 2000); // Redirects to login after a brief delay
     } catch (err) {
@@ -64,10 +63,10 @@ function Signup({ onLogin, onToggleLogin }) {
               className="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type='email'
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full p-3 mb-4 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />

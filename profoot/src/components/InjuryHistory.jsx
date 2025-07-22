@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 
 const InjuryHistory = () => {
   const [injuryRecords, setInjuryRecords] = useState([]);
   const [newInjury, setNewInjury] = useState({
     date: '',
-    injury: '',
+    name: '',
     description: '',
     doctor: '',
     recommendations: '',
@@ -12,10 +14,24 @@ const InjuryHistory = () => {
     treatment: '',
     status: 'Recovering',
   });
-
+  useEffect(()=>{
+    const getHistory=async ()=>{
+      const token =sessionStorage.getItem("profoot-token")
+      const decoded = jwtDecode(token)
+      const userId = decoded.id
+      try {
+        const response = await axios.get(`http://localhost:5500/player/injury/${userId}`)
+        setInjuryRecords(response.data.data)
+        console.log(response.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getHistory()
+  },[])
   const previousInjury = {
     date: '2023-09-15',
-    injury: 'Ankle Sprain',
+    name: 'Ankle Sprain',
     description: 'Moderate sprain sustained during a soccer match.',
     doctor: 'Dr. Saikiran',
     recommendations: 'Rest, ice, compression, and elevation.',
@@ -29,12 +45,22 @@ const InjuryHistory = () => {
     setNewInjury({ ...newInjury, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setInjuryRecords([...injuryRecords, newInjury]);
+    const token=sessionStorage.getItem("profoot-token")
+    const tok=jwtDecode(token)
+    const id=tok.id
+    setInjuryRecords([...injuryRecords, { ...newInjury, id: id }]);
+    try{
+      const response = await axios.post(`http://localhost:5500/player/injury`, {newInjury,id:id})
+      // console.log(newInjury)
+      console.log(response.data);
+    }catch(err){
+      console.log(error?.response)
+    }
     setNewInjury({
       date: '',
-      injury: '',
+      name: '',
       description: '',
       doctor: '',
       recommendations: '',
@@ -52,7 +78,7 @@ const InjuryHistory = () => {
       <div className="bg-gray-800 p-4 rounded-lg mb-6 border border-white">
         <h3 className="font-semibold text-xl">Previous Injury</h3>
         <p><strong>Date:</strong> {previousInjury.date}</p>
-        <p><strong>Injury:</strong> {previousInjury.injury}</p>
+        <p><strong>Name:</strong> {previousInjury.name}</p>
         <p><strong>Description:</strong> {previousInjury.description}</p>
         <p><strong>Doctor:</strong> {previousInjury.doctor}</p>
         <p><strong>Recommendations:</strong> {previousInjury.recommendations}</p>
@@ -78,12 +104,12 @@ const InjuryHistory = () => {
             />
           </div>
           <div>
-            <label className="block mb-1" htmlFor="injury">Injury</label>
+            <label className="block mb-1" htmlFor="injury">Name</label>
             <input
               type="text"
-              id="injury"
-              name="injury"
-              value={newInjury.injury}
+              id="name"
+              name="name"
+              value={newInjury.name}
               onChange={handleChange}
               required
               className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
@@ -125,14 +151,17 @@ const InjuryHistory = () => {
           </div>
           <div>
             <label className="block mb-1" htmlFor="severity">Severity</label>
-            <input
+            <select
               type="text"
               id="severity"
               name="severity"
               value={newInjury.severity}
               onChange={handleChange}
-              className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white"
-            />
+              className="w-full p-2 rounded border border-gray-600 bg-gray-700 text-white">
+                <option value="Mild">Mild</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Severe">Severe</option>
+            </select>
           </div>
           <div>
             <label className="block mb-1" htmlFor="treatment">Treatment</label>
@@ -175,7 +204,7 @@ const InjuryHistory = () => {
           injuryRecords.map((record, index) => (
             <div key={index} className="mb-4 border-b border-gray-700 pb-2">
               <p><strong>Date:</strong> {record.date}</p>
-              <p><strong>Injury:</strong> {record.injury}</p>
+              <p><strong>Name:</strong> {record.name}</p>
               <p><strong>Description:</strong> {record.description}</p>
               <p><strong>Doctor:</strong> {record.doctor}</p>
               <p><strong>Recommendations:</strong> {record.recommendations}</p>
