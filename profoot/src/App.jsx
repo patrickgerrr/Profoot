@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import axios from 'axios';
 
 function App() {
+  axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState(''); // Track username state
 

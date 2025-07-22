@@ -21,7 +21,7 @@ function Signup({ onLogin, onToggleLogin }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5500/api/auth/register', {
+      const response = await fetch('https://profoot-backend.vercel.app/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

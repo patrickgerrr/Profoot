@@ -20,7 +20,7 @@ const InjuryHistory = () => {
       const decoded = jwtDecode(token)
       const userId = decoded.id
       try {
-        const response = await axios.get(`http://localhost:5500/player/injury/${userId}`)
+        const response = await axios.get(`/player/injury/${userId}`)
         setInjuryRecords(response.data.data)
         console.log(response.data)
       } catch (error) {
@@ -52,7 +52,7 @@ const InjuryHistory = () => {
     const id=tok.id
     setInjuryRecords([...injuryRecords, { ...newInjury, id: id }]);
     try{
-      const response = await axios.post(`http://localhost:5500/player/injury`, {newInjury,id:id})
+      const response = await axios.post(`/player/injury`, {newInjury,id:id})
       // console.log(newInjury)
       console.log(response.data);
     }catch(err){
