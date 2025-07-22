@@ -12,7 +12,7 @@ const port = 5500;
 connectDB();
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:5173' })); // Allow requests from Vite's default port
+app.use(cors({})); // Allow requests from Vite's default port
 app.use(express.json());
 
 // Routes
